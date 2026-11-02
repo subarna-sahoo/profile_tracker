@@ -20,20 +20,34 @@ Track your GitHub visitors with custom SVG badges, and log their device & locati
 ## 🛠️ Run Locally
 
 ```bash
+python -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
 chmod +x run.sh
-./run.sh
+./run.sh          # uvicorn on http://localhost:8000
 ```
+
+Views are stored in a local SQLite database (`profile_tracker.db`), and tables are created on startup.
 
 ---
 
-## 🧪 How This Will Look
+## 📡 API
+
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/api/view?username=<name>` | Logs the visit (IP, user agent, referrer, country/city) and returns an SVG badge with the total view count. Bots and crawlers are ignored. |
+| `GET` | `/api/logs?username=<name>` | Last 50 visits as JSON |
+
+---
+
+## 🧪 Add It to Your Profile
+
+Deploy the app somewhere public, then add this to your GitHub profile README:
 
 ```html
 <img src="https://yourdomain.com/api/view?username=subarna-sahoo" />
 ```
 
-Live Example (on localhost):
-<img src="https://localhost:5000/api/view?username=subarna-sahoo" />
+To test locally, open <http://localhost:8000/api/view?username=subarna-sahoo> in a browser.
 
 ---
 
@@ -42,7 +56,8 @@ Live Example (on localhost):
 ```
 profile_tracker/
 ├── main.py
-├── models.py
+├── models.py                # ViewLog model
+├── models/                  # SQLAlchemy base
 ├── database.py
 ├── schemas.py
 ├── utils/
@@ -50,8 +65,7 @@ profile_tracker/
 │   ├── geoip.py
 ├── views/
 │   └── tracker.py
-├── alembic/ (optional for migrations)
-├── .env
+├── alembic/                 # Migrations (optional)
 ├── requirements.txt
 ├── README.md
 └── run.sh
